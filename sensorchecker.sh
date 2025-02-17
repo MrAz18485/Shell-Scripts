@@ -1,12 +1,12 @@
 #!/bin/bash
 function writefunc {
-	for i in `seq 1 5`;
+	for i in `seq 1 "$1"`;
 	do
-		sensors >> ./sensordata/"$filename"
+		sensors >> "$0"
 		echo "Wrote to file [$i/5]"
-		if [ "$i" -ne 5 ]
+		if [ "$i" -ne "$1" ]
 		then
-			sleep 5m
+			sleep "$interval"
 		else
 			echo "Finished writing!"
 			exit 0
@@ -14,20 +14,30 @@ function writefunc {
 	done
 }
 		
-read -p "Enter filename that the data will be saved on: " filename
-if [ -e ./sensordata/"$filename" ]
+read -p "Enter path(directory) that the data will be saved on: " filepath
+if [ -d "$filepath" ]
 then
-	read -p "Filename already exists, overwrite?(T/F) " choice
-	if [ $choice == "T" ] || [ $choice == "t" ]
+	read -p "Enter filename that the data will be saved on: " filename
+	if [ ! -e "$filepath/$filename" ]
 	then
-		echo "Starting to write data on already existing file"
-		writefunc
+		read -p "Enter number of times to run the sensors: " numiter
+		if [ numiter > 0 ]
+		then
+			read -p "Enter interval (Xs, Xm, Xh): " interval
+			if [ [ "${interval:1:1}" == 's' ] || [ "${interval:1:1}" == 'm' ] || [ "${interval:1:1}" == 'h' ] ]; then
+				writefunc "$filepath/$filename" "$numiter" "$interval"
+			else
+				echo "Incorrect interval, aborting"
+				exit
+			fi
+		else
+			echo "Incorrect iteration count, aborting"
+			exit
+		fi
 	else
-		echo "Quitting program.."
-		exit 2
+		echo "File already exists, aborting"
+		exit
 	fi
 else
-	touch ./sensordata/"$filename"
-	echo "Starting to write data on newly created file"
-	writefunc
+	echo "Incorrect path, aborting"	
 fi
