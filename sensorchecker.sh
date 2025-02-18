@@ -1,10 +1,11 @@
 #!/bin/bash
 function writefunc {
-	for i in `seq 1 "$1"`;
+	for i in `seq 1 $2`;
 	do
-		sensors >> "$0"
-		echo "Wrote to file [$i/5]"
-		if [ "$i" -ne "$1" ]
+		printf "[$i/$2]\n\n" >> $1
+		sensors >> $1 
+		echo "Wrote to file [$i/$2]"
+		if [ $i -ne $2 ]
 		then
 			sleep "$interval"
 		else
@@ -15,29 +16,30 @@ function writefunc {
 }
 		
 read -p "Enter path(directory) that the data will be saved on: " filepath
-if [ -d "$filepath" ]
+if [ -d $filepath ]
 then
 	read -p "Enter filename that the data will be saved on: " filename
 	if [ ! -e "$filepath/$filename" ]
 	then
 		read -p "Enter number of times to run the sensors: " numiter
-		if [ numiter > 0 ]
+		if [ $numiter -gt 0 ]
 		then
 			read -p "Enter interval (Xs, Xm, Xh): " interval
-			if [ [ "${interval:1:1}" == 's' ] || [ "${interval:1:1}" == 'm' ] || [ "${interval:1:1}" == 'h' ] ]; then
+			if [ [ ${interval:0:0} -gt 0 ] && [ ${interval:1:1} -eq 's' || ${interval:1:1} -eq 'm' || ${interval:1:1} -eq 'h' ] ]; then
 				writefunc "$filepath/$filename" "$numiter" "$interval"
 			else
 				echo "Incorrect interval, aborting"
-				exit
+				exit 5
 			fi
 		else
 			echo "Incorrect iteration count, aborting"
-			exit
+			exit 4
 		fi
 	else
 		echo "File already exists, aborting"
-		exit
+		exit 3
 	fi
 else
-	echo "Incorrect path, aborting"	
+	echo "Incorrect path, aborting"
+	exit 2	
 fi
