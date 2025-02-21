@@ -25,7 +25,7 @@ then
 		if [ $numiter -gt 0 ]
 		then
 			read -p "Enter interval (Xs, Xm, Xh): " interval
-			if [ [ ${interval:0:0} -gt 0 ] && [ ${interval:1:1} -eq 's' || ${interval:1:1} -eq 'm' || ${interval:1:1} -eq 'h' ] ]; then
+			if [ [ ${interval:0:0} != '^[0-9]+$' ] && [ [ ${interval:1:1} != 's' ] || [ ${interval:1:1} != 'm' ] || [ ${interval:1:1} != 'h' ] ] ]; then
 				writefunc "$filepath/$filename" "$numiter" "$interval"
 			else
 				echo "Incorrect interval, aborting"
