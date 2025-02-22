@@ -22,10 +22,12 @@ then
 	if [ ! -e "$filepath/$filename" ]
 	then
 		read -p "Enter number of times to run the sensors: " numiter
-		if [ $numiter -gt 0 ]
+		numitersize=${#numiter}
+		if [ ${numiter:0:$((numitersize-2))}=='^[0-9]+$' ]
 		then
 			read -p "Enter interval (Xs, Xm, Xh): " interval
-			if [ [ ${interval:0:0} != '^[0-9]+$' ] && [ [ ${interval:1:1} == 's' ] || [ ${interval:1:1} == 'm' ] || [ ${interval:1:1} == 'h' ] ] ]; then
+			intervalsize=${#interval}
+			if [[ ( ${interval:0:$((intervalsize-2))}=~'^[0-9]+$' ) && ( ${interval:$((intervalsize-1)):$((intervalsize-1))}=='s' || ${interval:$((intervalsize-1)):$((intervalsize-1))}=='m' || ${interval:$((intervalsize-1)):$((intervalsize-1))}=='h' ) ]]; then
 				writefunc "$filepath/$filename" "$numiter" "$interval"
 			else
 				echo "Incorrect interval, aborting"
