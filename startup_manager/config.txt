@@ -1,0 +1,5 @@
+# INSERT SCRIPTS YOU WANT TO RUN TO THIS FILE
+# Example: sudo systemctl stop service1
+
+sudo systemctl stop mysql.service
+sudo tlp start
